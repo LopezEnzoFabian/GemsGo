@@ -13,19 +13,34 @@ class AuthController extends BaseController
 
     public function login()
     {
+        $model = new UsuarioModel();
+
         $email = $this->request->getPost('email');
         $password = $this->request->getPost('password');
 
-        $userModel = new UsuarioModel();
-        $user = $userModel->where('email', $email)
-                          ->where('password', $password)
-                          ->first();
+        $usuario = $model->where('email', $email)->first();
 
-        if ($user) {
-            session()->set('usuario_id', $user['id']);
+        if ($usuario && $usuario['password'] == $password) {
+
+            session()->set([
+                'id_usuario' => $usuario['id_usuario'],
+                'email' => $usuario['email'],
+                'logged_in' => true
+            ]);
+
             return redirect()->to('/productos');
+
         } else {
-            return "Credenciales incorrectas";
+            return view('auth/login', [
+                'error' => 'Datos incorrectos'
+            ]);
         }
     }
+
+    public function logout()
+{
+    session()->destroy(); // cerrar session
+
+    return redirect()->to('/login');
+}
 }

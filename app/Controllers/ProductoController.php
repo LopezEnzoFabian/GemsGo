@@ -8,7 +8,7 @@ class ProductoController extends BaseController
 {
     public function index()
     {
-        if (!session()->get('usuario_id')) {
+        if (!session()->get('id_usuario')) {
             return redirect()->to('/login');
         }
 

@@ -7,13 +7,14 @@ use App\Models\VentaModel;
 
 class CompraController extends BaseController
 {
-    public function realizar()
+    public function realizarCompra()
     {
         $productoModel = new ProductoModel();
         $ventaModel = new VentaModel();
 
         $id_producto = $this->request->getPost('id_producto');
         $id_usuario = session()->get('id_usuario');
+        $id_metodo = $this->request->getPost('id_metodo');
 
         $producto = $productoModel->find($id_producto);
 
@@ -23,7 +24,7 @@ class CompraController extends BaseController
                 'mensaje' => 'Producto sin stock'
             ]);
         }
-
+        
         // Guardar venta (ANTES "compra")
         $ventaModel->save([
             'fecha_compra' => date('Y-m-d H:i:s'),
@@ -40,7 +41,21 @@ class CompraController extends BaseController
         ]);
 
         return view('compra/resultado', [
-            'mensaje' => 'Compra realizada con éxito'
+            'mensaje' => 'Compra realizada con éxito. Hemos enviado a tu correo registrado los datos de pago y seguimiento de la orden.'
         ]);
     }
+
+
+public function formulario()
+{
+    $id_producto = $this->request->getPost('id_producto');
+
+    $productoModel = new ProductoModel();
+    $producto = $productoModel->find($id_producto);
+
+    return view('compra/formulario', [
+        'producto' => $producto
+    ]);
+}
+
 }
